@@ -20,7 +20,9 @@
 using kv_pair = pair<uintV, uintV>;
 
 int main(int argc, char* argv[]) {
-    std::tuple t = std::make_tuple(1, 2);
+    uintV key = 100;
+    uintV value = 200;
+    std::tuple t = std::make_tuple(key, value);
     auto tree_plus_graph = empty_treeplus_graph();  
     tree_plus_graph.insert_edges_batch(1, &t);
 }
