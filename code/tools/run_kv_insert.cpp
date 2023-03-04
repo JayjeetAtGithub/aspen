@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
     auto tree_plus_graph = empty_treeplus_graph();  
     tree_plus_graph.insert_edges_batch(1, &t);
 
-    std::cout << tree_plus_graph->num_vertices() << std::endl;
-    std::cout << tree_plus_graph->num_edges() << std::endl;
+    std::cout << tree_plus_graph.num_vertices() << std::endl;
+    std::cout << tree_plus_graph.num_edges() << std::endl;
 }
 
 // void parallel_updates(commandLine& P) {
