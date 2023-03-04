@@ -23,6 +23,7 @@ int main(int argc, char* argv[]) {
     uintV value = 200;
 
     std::vector<std::tuple<uintV, uintV>> stream_of_kv;
+    // read k/v pairs from a file ?
     stream_of_kv.push_back(std::make_tuple(1,2));
     stream_of_kv.push_back(std::make_tuple(3,4));
     stream_of_kv.push_back(std::make_tuple(5,6));
@@ -35,7 +36,9 @@ int main(int argc, char* argv[]) {
         tree_plus_graph.insert_edges_batch(1, &kv);
     }
 
-    tree_plus_graph.print_compression_stats();
+    auto r = pbbs::random();
+    std::cout << r.ith_rand(0) << std::endl;
+
 }
 
 // void parallel_updates(commandLine& P) {
