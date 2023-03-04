@@ -22,7 +22,7 @@ using kv_pair = pair<uintV, uintV>;
 int main(int argc, char* argv[]) {
     std::tuple t = std::make_tuple(1, 2);
     auto tree_plus_graph = empty_treeplus_graph();  
-    tree_plus_graph.insert(1, &t);
+    tree_plus_graph.insert_edges_batch(1, &t);
 }
 
 // void parallel_updates(commandLine& P) {
