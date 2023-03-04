@@ -17,7 +17,6 @@
 
 #include "rmat_util.h"
 
-using kv_pair = pair<uintV, uintV>;
 
 int main(int argc, char* argv[]) {
     uintV key = 100;
