@@ -34,6 +34,8 @@ int main(int argc, char* argv[]) {
         std::cout << "Inserting: " << std::get<0>(kv) << ", " << std::get<1>(kv) << std::endl;
         tree_plus_graph.insert_edges_batch(1, &kv);
     }
+
+    tree_plus_graph.print_compression_stats();
 }
 
 // void parallel_updates(commandLine& P) {
