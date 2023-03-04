@@ -21,9 +21,19 @@
 int main(int argc, char* argv[]) {
     uintV key = 100;
     uintV value = 200;
-    std::tuple t = std::make_tuple(key, value);
+
+    std::vector<std::tuple<uintV, uintV>> stream_of_kv;
+    stream_of_kv.push_back(std::make_tuple(1,2));
+    stream_of_kv.push_back(std::make_tuple(3,4));
+    stream_of_kv.push_back(std::make_tuple(5,6));
+    stream_of_kv.push_back(std::make_tuple(7,8));
+
     auto tree_plus_graph = empty_treeplus_graph();  
-    tree_plus_graph.insert_edges_batch(1, &t);
+
+    for (auto kv : stream_of_kv) {
+        std::cout << "Inserting: " << std::get<0>(kv) << ", " << std::get<1>(kv) << std::endl;
+        tree_plus_graph.insert_edges_batch(1, &kv);
+    }
 }
 
 // void parallel_updates(commandLine& P) {
