@@ -24,8 +24,6 @@ int main(int argc, char* argv[]) {
     std::tuple t = std::make_tuple(key, value);
     auto tree_plus_graph = empty_treeplus_graph();  
     tree_plus_graph.insert_edges_batch(1, &t);
-
-    tree_plus_graph.print_stats();
 }
 
 // void parallel_updates(commandLine& P) {
