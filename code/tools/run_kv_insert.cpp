@@ -36,8 +36,8 @@ int main(int argc, char* argv[]) {
         tree_plus_graph.insert_edges_batch(1, &kv);
     }
 
-    auto r = pbbs::random(100);
-    for (int i = 0; i < 100; i++) {
+    auto r = pbbs::random(100000);
+    for (int i = 0; i < 100000; i++) {
         std::cout << r.ith_rand(i) << std::endl;
     }
 }
