@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
         stream_of_kv.push_back(std::make_tuple(r.ith_rand(2*i), r.ith_rand(2*i+1)));        
     }
     
-    std::timer st;
+    timer st;
     st.start();
     for (auto kv : stream_of_kv) {
         std::cout << "Inserting: " << std::get<0>(kv) << ", " << std::get<1>(kv) << std::endl;
