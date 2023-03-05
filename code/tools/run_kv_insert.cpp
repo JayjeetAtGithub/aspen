@@ -19,27 +19,22 @@
 
 
 int main(int argc, char* argv[]) {
-    uintV key = 100;
-    uintV value = 200;
-
-    std::vector<std::tuple<uintV, uintV>> stream_of_kv;
-    // read k/v pairs from a file ?
-    stream_of_kv.push_back(std::make_tuple(1,2));
-    stream_of_kv.push_back(std::make_tuple(3,4));
-    stream_of_kv.push_back(std::make_tuple(5,6));
-    stream_of_kv.push_back(std::make_tuple(7,8));
-
     auto tree_plus_graph = empty_treeplus_graph();  
 
+    std::vector<std::tuple<uintV, uintV>> stream_of_kv;
+    auto r = pbbs::random(100000);
+    for (int i = 0; i < 50000; i++) {
+        stream_of_kv.push_back(std::make_tuple(r.ith_rand(2*i), r.ith_rand(2*i+1)));        
+    }
+    
+    std::time st;
+    st.start();
     for (auto kv : stream_of_kv) {
         std::cout << "Inserting: " << std::get<0>(kv) << ", " << std::get<1>(kv) << std::endl;
         tree_plus_graph.insert_edges_batch(1, &kv);
     }
-
-    auto r = pbbs::random(100000);
-    for (int i = 0; i < 100000; i++) {
-        std::cout << r.ith_rand(i) << std::endl;
-    }
+    double runtime = st.stop();
+    std::cout << "runtime = " << runtime << endl;
 }
 
 // void parallel_updates(commandLine& P) {
