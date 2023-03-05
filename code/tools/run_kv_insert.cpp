@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     std::vector<std::tuple<uintV, uintV>> stream_of_kv;
     auto r = pbbs::random(100000);
     for (int i = 0; i < 50000; i++) {
-        stream_of_kv.push_back(std::make_tuple(r.ith_rand(2*i), r.ith_rand(2*i+1)));        
+        stream_of_kv.push_back(std::make_tuple(r.ith_rand(2*i), r.ith_rand((2*i)+1)));        
     }
     
     timer st;
