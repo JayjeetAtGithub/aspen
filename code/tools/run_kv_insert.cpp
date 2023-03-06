@@ -21,6 +21,7 @@
 int main(int argc, char* argv[]) {
     auto tree_plus_graph = empty_treeplus_graph();  
 
+    // Inserting key/value pairs one at a time
     std::vector<std::tuple<uintV, uintV>> stream_of_kv;
     auto r = pbbs::random(200000);
     for (int i = 0; i < 100000; i++) {
