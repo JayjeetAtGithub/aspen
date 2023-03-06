@@ -35,7 +35,14 @@ int main(int argc, char* argv[]) {
         tree_plus_graph.insert_edges_batch(1, &kv);
     }
     double runtime = st.stop();
-    std::cout << "runtime = " << runtime << endl;
+    std::cout << "runtime (one-at-a-time) = " << runtime << std::endl;
+
+    // Inserting key/value pairs in batches
+    st.start();
+    tree_plus_graph.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
+    runtime = st.stop();
+    std::cout << "runtime (batch) = " << runtime << std::endl;
+
 }
 
 // void parallel_updates(commandLine& P) {
