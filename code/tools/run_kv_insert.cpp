@@ -47,8 +47,7 @@ int main(int argc, char* argv[]) {
     //// using just the tree plus 
 
     sym_immutable_graph_tree_plus tree_plus;
-    tree_plus::init(500000, 500000);
-    tree_plus::insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
+    tree_plus.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
 
 }
 
