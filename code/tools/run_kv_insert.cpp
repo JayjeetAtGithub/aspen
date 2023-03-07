@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
     }
     double runtime = st.stop();
     std::cout << "runtime (one-at-a-time) = " << runtime << std::endl;
+    std::cout << "tree_plus_graph.num_vertices() = " << tree_plus_graph.graph.num_vertices() << std::endl;
 
     // Inserting key/value pairs in batches
     st.start();
