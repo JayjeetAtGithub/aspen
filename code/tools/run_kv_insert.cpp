@@ -20,19 +20,26 @@
 
 
 int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        std::cout << "Usage: " << argv[0] << " <num_vertices>" << std::endl;
+        return 0;
+    } 
+
+    size_t num_kv_pairs = std::stol(argv[1]);
+
     auto tree_plus_graph = empty_treeplus_graph();  
 
     // Inserting key/value pairs one at a time
     std::vector<std::tuple<uintV, uintV>> stream_of_kv;
-    auto r = pbbs::random(500000);
-    for (int i = 0; i < 250000; i++) {
+    auto r = pbbs::random(num_kv_pairs*2);
+    for (int i = 0; i < num_kv_pairs; i++) {
         stream_of_kv.push_back(std::make_tuple(r.ith_rand(2*i), r.ith_rand((2*i)+1)));        
     }
     
     timer st;
     st.start();
     for (auto kv : stream_of_kv) {
-        std::cout << "Inserting: " << std::get<0>(kv) << ", " << std::get<1>(kv) << std::endl;
+        // std::cout << "Inserting: " << std::get<0>(kv) << ", " << std::get<1>(kv) << std::endl;
         tree_plus_graph.insert_edges_batch(1, &kv);
     }
     double runtime = st.stop();
