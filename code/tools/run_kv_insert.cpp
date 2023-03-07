@@ -1,6 +1,7 @@
 #include "../graph/api.h"
 #include "../trees/utils.h"
 #include "../lib_extensions/sparse_table_hash.h"
+#include "../graph/tree_plus/immutable_graph_tree_plus.h"
 #include "../pbbslib/random_shuffle.h"
 
 #include <cstring>
@@ -36,13 +37,18 @@ int main(int argc, char* argv[]) {
     }
     double runtime = st.stop();
     std::cout << "runtime (one-at-a-time) = " << runtime << std::endl;
-    std::cout << "tree_plus_graph.num_vertices() = " << tree_plus_graph.graph.num_vertices() << std::endl;
 
     // Inserting key/value pairs in batches
     st.start();
     tree_plus_graph.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
     runtime = st.stop();
     std::cout << "runtime (batch) = " << runtime << std::endl;
+
+    //// using just the tree plus 
+
+    sym_immutable_graph_tree_plus tree_plus;
+    tree_plus::init(500000, 500000);
+    tree_plus::insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
 
 }
 
