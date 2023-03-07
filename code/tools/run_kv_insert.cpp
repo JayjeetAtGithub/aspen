@@ -45,9 +45,13 @@ int main(int argc, char* argv[]) {
     std::cout << "runtime (batch) = " << runtime << std::endl;
 
     //// using just the tree plus 
-
+    
+    
     sym_immutable_graph_tree_plus tree_plus;
+    st.start();
     tree_plus.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
+    runtime = st.stop();
+    std::cout << "runtime (tree plus) = " << runtime << std::endl;
 
 }
 
