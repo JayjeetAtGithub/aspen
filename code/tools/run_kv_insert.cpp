@@ -53,7 +53,8 @@ int main(int argc, char* argv[]) {
     runtime = st.stop();
     std::cout << "runtime (tree plus) = " << runtime << std::endl;
     std::cout << "size: " << tree_plus.size_in_bytes() << std::endl;
-
+    std::cout << "num_vertices: " << tree_plus.num_vertices() << std::endl;
+    std::cout << "num_edges: " << tree_plus.num_edges() << std::endl;
 }
 
 // void parallel_updates(commandLine& P) {
