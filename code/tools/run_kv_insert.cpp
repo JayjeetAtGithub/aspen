@@ -52,6 +52,7 @@ int main(int argc, char* argv[]) {
     tree_plus.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
     runtime = st.stop();
     std::cout << "runtime (tree plus) = " << runtime << std::endl;
+    std::cout << "size: " << tree_plus.size_in_bytes() << std::endl;
 
 }
 
