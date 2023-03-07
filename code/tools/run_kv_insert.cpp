@@ -24,8 +24,8 @@ int main(int argc, char* argv[]) {
 
     // Inserting key/value pairs one at a time
     std::vector<std::tuple<uintV, uintV>> stream_of_kv;
-    auto r = pbbs::random(200000);
-    for (int i = 0; i < 100000; i++) {
+    auto r = pbbs::random(500000);
+    for (int i = 0; i < 250000; i++) {
         stream_of_kv.push_back(std::make_tuple(r.ith_rand(2*i), r.ith_rand((2*i)+1)));        
     }
     
