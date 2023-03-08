@@ -1,6 +1,24 @@
 
 // C++ program for B-Tree insertion
-#include<iostream>
+#include "../graph/api.h"
+#include "../trees/utils.h"
+#include "../lib_extensions/sparse_table_hash.h"
+#include "../graph/tree_plus/immutable_graph_tree_plus.h"
+#include "../pbbslib/random_shuffle.h"
+
+#include <cstring>
+
+#include <vector>
+#include <algorithm>
+#include <chrono>
+#include <thread>
+#include <cmath>
+
+
+#include <iostream>
+#include <fstream>
+
+#include "rmat_util.h"
 using namespace std;
  
 // A BTree node
@@ -244,24 +262,26 @@ void BTreeNode::splitChild(int i, BTreeNode *y)
 // Driver program to test above functions
 int main()
 {
-    BTree t(3); // A B-Tree with minimum degree 3
-    t.insert(10);
-    t.insert(20);
-    t.insert(5);
-    t.insert(6);
-    t.insert(12);
-    t.insert(30);
-    t.insert(7);
-    t.insert(17);
+    BTree t(500000); // A B-Tree with minimum degree 3
+    
+    auto r = pbbs::random(500000);
+    
+    timer st;
+    st.start();
+    for (int i = 0; i < 500000; i++) {
+        t.insert(r.ith_rand(i));
+    }
+    double runtime = st.stop();
+    std::cout << "runtime (one-at-a-time) = " << runtime << std::endl;
+
+    // cout << "Traversal of the constructed tree is ";
+    // t.traverse();
  
-    cout << "Traversal of the constructed tree is ";
-    t.traverse();
+    // int k = 6;
+    // (t.search(k) != NULL)? cout << "\nPresent" : cout << "\nNot Present";
  
-    int k = 6;
-    (t.search(k) != NULL)? cout << "\nPresent" : cout << "\nNot Present";
- 
-    k = 15;
-    (t.search(k) != NULL)? cout << "\nPresent" : cout << "\nNot Present";
+    // k = 15;
+    // (t.search(k) != NULL)? cout << "\nPresent" : cout << "\nNot Present";
  
     return 0;
 }
