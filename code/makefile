@@ -47,7 +47,7 @@ endif
 # 	$(CC) $(CFLAGS) $(PFLAGS) tools/run_simultaneous_updates_queries.cpp -o run_simultaneous_updates_queries
 
 
-ALL= memory_footprint run_static_algorithm run_batch_updates run_simultaneous_updates_queries run_kv_insert
+ALL= memory_footprint run_static_algorithm run_batch_updates run_simultaneous_updates_queries run_kv_insert run_kv_insert_btree
 all: $(ALL)
 
 % : tools/%.cpp
