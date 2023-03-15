@@ -38,9 +38,22 @@ typedef unsigned int uintE;
 #endif
 
 // Defining data types for Key and Value
-typedef unsigned int uintKey;
-// typedef unsigned long uintKey;
-typedef float intValue;
+
+// define KEYLONG
+#if defined(KEYLONG)
+typedef long intK;
+typedef unsigned long uintK;
+#define INT_K_MAX LONG_MAX
+#define UINT_K_MAX ULONG_MAX
+#else
+typedef int intK;
+typedef unsigned int uintK;
+#define INT_K_MAX INT_MAX
+#define UINT_K_MAX UINT_MAX
+#endif
+
+// String Values
+typedef char* strV;
 
 typedef unsigned int timestamp;
 typedef unsigned int ref_count;

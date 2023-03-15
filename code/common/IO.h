@@ -237,8 +237,8 @@ auto read_kv_pairs(const char* fname, bool mmap=false) {
   // cout << "n = " << n << " m = " << m << endl;
   // assert(len == n + m + 2);
 
-  uintKey* keys = pbbs::new_array_no_init<uintKey>(len);
-  intValue* values = pbbs::new_array_no_init<intValue>(len);
+  uintK* keys = pbbs::new_array_no_init<uintK>(len);
+  strV* values = pbbs::new_array_no_init<strV>(len);
 
   // Have to change for the new input format of key value pair datasets
   parallel_for(0, len, [&] (size_t i) { keys[i] = atol(tokens[i]); });
