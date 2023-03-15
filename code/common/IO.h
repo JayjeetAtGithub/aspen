@@ -208,7 +208,7 @@ auto read_compressed_graph(const char* fname, bool is_symmetric, bool mmap=false
 }
 
 // Read Key-Value pairs
-auto read_kv_pairs(const char* fname, bool mmap=false) {
+auto read_unweighted_kv_graph(const char* fname, bool mmap=false) {
   pbbs::sequence<char*> tokens;
   pbbs::sequence<char> S;
   if (mmap) {

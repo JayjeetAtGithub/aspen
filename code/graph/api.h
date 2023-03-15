@@ -197,6 +197,28 @@ auto initialize_graph(string fname="", bool mmap=false, bool is_symmetric=true, 
   return versioned_graph<treeplus_graph>(n, m, offsets, edges);
 }
 
+auto initialize_kv_graph(string fname="", bool mmap=false, bool is_symmetric=true, bool compressed=false, size_t n_parts=1) {
+  if (fname == "") {
+    cout << "Unimplemented!" << endl;
+    exit(0);
+  }
+  if (compressed && n_parts > 1) {
+    cout << "Building large compressed graph" << endl;
+    return build_large_compressed_graph(fname, is_symmetric, n_parts);
+  }
+  size_t n; size_t m;
+  uintK* keys; strV* values;
+  if (!compressed) {
+    cout << "Reading Unweighted Graph" << endl;
+    std::tie(n, keys, values) = read_unweighted_kv_graph(fname.c_str(), is_symmetric, mmap);
+    cout << "Read Unweighted Graph" << endl;
+  } else {
+    cout << "Reading Compressed Graph" << endl;
+    std::tie(n, m, offsets, edges) = read_compressed_graph(fname.c_str(), is_symmetric, mmap);
+    cout << "Read Compressed Graph" << endl;
+  }
+  return versioned_graph<treeplus_graph>(n, m, offsets, edges);
+}
 
 auto empty_treeplus_graph() {
   return versioned_graph<treeplus_graph>();
@@ -217,4 +239,14 @@ auto get_graph_edges(const char* fname, bool is_symmetric, bool mmap=false) {
   size_t n = get<0>(T); size_t m = get<1>(T);
   uintE* offsets = get<2>(T); uintV* edges = get<3>(T);
   return make_tuple(n, m, offsets, edges);
+}
+
+auto initialize_treeplus_kv_graph(commandLine& P) {
+  string fname = string(P.getOptionValue("-f", default_file_name.c_str()));
+  bool mmap = P.getOption("-m");
+  bool is_symmetric = P.getOption("-s");
+  bool compressed = P.getOption("-c");
+  size_t n_parts = P.getOptionLongValue("-nparts", 1);
+
+  return initialize_kv_graph(fname, mmap, is_symmetric, compressed, n_parts);
 }
