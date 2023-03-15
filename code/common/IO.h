@@ -206,3 +206,44 @@ auto read_compressed_graph(const char* fname, bool is_symmetric, bool mmap=false
 
   return make_tuple(n, m, ret_offsets, ret_edges);
 }
+
+// Read Key-Value pairs
+auto read_kv_pairs(const char* fname, bool mmap=false) {
+  pbbs::sequence<char*> tokens;
+  pbbs::sequence<char> S;
+  if (mmap) {
+    auto SS = mmapStringFromFile(fname);
+    char *bytes = pbbs::new_array_no_init<char>(SS.second);
+    // Cannot mutate the graph unless we copy.
+    parallel_for(0, SS.second, [&] (size_t i) {
+      bytes[i] = SS.first[i];
+    });
+    if (munmap(SS.first, SS.second) == -1) {
+      perror("munmap");
+      exit(-1);
+    }
+    S = pbbs::sequence<char>(bytes, SS.second);
+  } else {
+    S = readStringFromFile(fname);
+  }
+  tokens = pbbs::tokenize(S, [] (const char c) { return pbbs::is_space(c); });
+  // assert(tokens[0] == (string) "AdjacencyGraph");
+
+  // size_t len = tokens.size() - 1;
+  size_t len = tokens.size();
+  // size_t n = atol(tokens[1]);
+  // size_t m = atol(tokens[2]);
+
+  // cout << "n = " << n << " m = " << m << endl;
+  // assert(len == n + m + 2);
+
+  uintKey* keys = pbbs::new_array_no_init<uintKey>(len);
+  intValue* values = pbbs::new_array_no_init<intValue>(len);
+
+  parallel_for(0, len, [&] (size_t i) { keys[i] = atol(tokens[i]); });
+  parallel_for(0, len, [&] (size_t i) { values[i] = atol(tokens[i]); });
+
+  S.clear();
+  tokens.clear();
+  return make_tuple(len, len, keys, values);
+}

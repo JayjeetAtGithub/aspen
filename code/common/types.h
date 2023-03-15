@@ -37,6 +37,11 @@ typedef unsigned int uintE;
 #define UINT_E_MAX UINT_MAX
 #endif
 
+// Defining data types for Key and Value
+typedef unsigned int uintKey;
+// typedef unsigned long uintKey;
+typedef float intValue;
+
 typedef unsigned int timestamp;
 typedef unsigned int ref_count;
 
