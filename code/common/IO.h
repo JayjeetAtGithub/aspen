@@ -240,6 +240,7 @@ auto read_kv_pairs(const char* fname, bool mmap=false) {
   uintKey* keys = pbbs::new_array_no_init<uintKey>(len);
   intValue* values = pbbs::new_array_no_init<intValue>(len);
 
+  // Have to change for the new input format of key value pair datasets
   parallel_for(0, len, [&] (size_t i) { keys[i] = atol(tokens[i]); });
   parallel_for(0, len, [&] (size_t i) { values[i] = atol(tokens[i]); });
 
