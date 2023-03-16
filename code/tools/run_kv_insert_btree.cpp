@@ -192,13 +192,13 @@ void BTreeNode::splitChild(int i, BTreeNode *y)
  
 int main()
 {
-    BTree t(500000);
+    BTree t(1000000);
     
-    auto r = pbbs::random(500000);
+    auto r = pbbs::random(1000000);
     
     timer st;
     st.start();
-    for (int i = 0; i < 500000; i++) {
+    for (int i = 0; i < 1000000; i++) {
         t.insert(r.ith_rand(i));
     }
     double runtime = st.stop();
