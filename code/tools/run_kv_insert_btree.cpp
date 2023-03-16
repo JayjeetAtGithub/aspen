@@ -618,7 +618,7 @@ void BTree::remove(int k)
     return;
 }
 
-int main() {
+int main(int argc, char** argv) {
     size_t num_kv_pairs = std::stol(argv[1]);
     BTree t(num_kv_pairs);
     
