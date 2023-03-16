@@ -125,14 +125,15 @@ auto read_unweighted_kv_graph(const char* fname, bool mmap=false) {
     S = readStringFromFile(fname);
   }
   kv = pbbs::lines(S, [] (const char c) { return pbbs::is_newline(c); });
-  std::cout << kv[0] << endl;
-  std::cout << kv[0][0] << endl;
+  // std::cout << kv[0] << endl;
+  // std::cout << kv[0][0] << endl;
   // std::cout << kv[1] << endl;
   
   // std::cout << typeid(kv).name() << endl;
   // std::cout << typeid(kv[0]).name() << endl;
 
-  size_t len = kv.size() - 1;
+  size_t len = kv.size();
+  
   // std::cout << len << endl;
   // std::cout << kv[len] << endl;
   // std::cout << kv[len-1] << endl;
@@ -141,11 +142,14 @@ auto read_unweighted_kv_graph(const char* fname, bool mmap=false) {
   strV* values = pbbs::new_array_no_init<strV>(len);
 
   // Have to change for the new input format of key value pair datasets
-  parallel_for(0, len, [&] (size_t i) { keys[i] = atoi(kv[i]); });
-  parallel_for(0, len, [&] (size_t i) { values[i] = kv[i]; });
-
+  parallel_for(0, len, [&] (size_t i) { std::string str1 = kv[i] ; keys[i] = stol(str1.substr(0, str1.find(" "))); values[i] = &str1.substr(str1.find(" ")+1)[0];});
+  // parallel_for(0, len, [&] (size_t i) { std::string str1 = kv[i] ; cout << str1 << endl ; cout << i << endl;});
+  // parallel_for(0, len, [&] (size_t i) { std::string str1 = kv[i] ; cout << i << " " << stol(str1.substr(0, str1.find(" "))) << " " << str1.substr(str1.find(" ")+1) << endl;});
+  // parallel_for(0, len, [&] (size_t i) { values[i] = kv[i]; });
+  // cout << "Success1" << endl;
   S.clear();
   kv.clear();
+  // cout << "Success2" << endl;
   return make_tuple(len, keys, values);
 }
 

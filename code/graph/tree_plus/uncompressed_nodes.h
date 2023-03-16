@@ -5,13 +5,15 @@ namespace uncompressed_lists {
     struct node {
       static constexpr const size_t node_array_size = 32;
       static constexpr const size_t integers_per_block = node_array_size - 1;
-      uintV neighbors[node_array_size];
+      // uintV neighbors[node_array_size];
+      uintK neighbors[node_array_size];
       using allocator = list_allocator<node>;
 
       node() { }
 
       node(const node& other) {
-        uintV const* their_array = other.neighbors;
+        // uintV const* their_array = other.neighbors;
+        uintK const* their_array = other.neighbors;
         for (size_t i=0; i<node_array_size; i++) {
           neighbors[i] = their_array[i];
         }
@@ -23,13 +25,15 @@ namespace uncompressed_lists {
     struct node {
       static constexpr const size_t node_array_size = 64;
       static constexpr const size_t integers_per_block = node_array_size - 1;
-      uintV neighbors[node_array_size];
+      // uintV neighbors[node_array_size];
+      uintK neighbors[node_array_size];
       using allocator = list_allocator<node>;
 
       node() { }
 
       node(const node& other) {
-        uintV const* their_array = other.neighbors;
+        // uintV const* their_array = other.neighbors;
+        uintK const* their_array = other.neighbors;
         for (size_t i=0; i<node_array_size; i++) {
           neighbors[i] = their_array[i];
         }
@@ -42,13 +46,15 @@ namespace uncompressed_lists {
     struct node {
       static constexpr const size_t node_array_size = 128;
       static constexpr const size_t integers_per_block = node_array_size - 1;
-      uintV neighbors[node_array_size];
+      // uintV neighbors[node_array_size];
+      uintK neighbors[node_array_size];
       using allocator = list_allocator<node>;
 
       node() { }
 
       node(const node& other) {
-        uintV const* their_array = other.neighbors;
+        // uintV const* their_array = other.neighbors;
+        uintK const* their_array = other.neighbors;
         for (size_t i=0; i<node_array_size; i++) {
           neighbors[i] = their_array[i];
         }
@@ -60,13 +66,15 @@ namespace uncompressed_lists {
     struct node {
       static constexpr const size_t node_array_size = 256;
       static constexpr const size_t integers_per_block = node_array_size - 1;
-      uintV neighbors[node_array_size];
+      // uintV neighbors[node_array_size];
+      uintK neighbors[node_array_size];
       using allocator = list_allocator<node>;
 
       node() { }
 
       node(const node& other) {
-        uintV const* their_array = other.neighbors;
+        // uintV const* their_array = other.neighbors;
+        uintK const* their_array = other.neighbors;
         for (size_t i=0; i<node_array_size; i++) {
           neighbors[i] = their_array[i];
         }
@@ -78,13 +86,15 @@ namespace uncompressed_lists {
     struct node {
       static constexpr const size_t node_array_size = 512;
       static constexpr const size_t integers_per_block = node_array_size - 1;
-      uintV neighbors[node_array_size];
+      // uintV neighbors[node_array_size];
+      uintK neighbors[node_array_size];
       using allocator = list_allocator<node>;
 
       node() { }
 
       node(const node& other) {
-        uintV const* their_array = other.neighbors;
+        // uintV const* their_array = other.neighbors;
+        uintK const* their_array = other.neighbors;
         for (size_t i=0; i<node_array_size; i++) {
           neighbors[i] = their_array[i];
         }
@@ -96,13 +106,15 @@ namespace uncompressed_lists {
     struct node {
       static constexpr const size_t node_array_size = 1024;
       static constexpr const size_t integers_per_block = node_array_size - 1;
-      uintV neighbors[node_array_size];
+      // uintV neighbors[node_array_size];
+      uintK neighbors[node_array_size];
       using allocator = list_allocator<node>;
 
       node() { }
 
       node(const node& other) {
-        uintV const* their_array = other.neighbors;
+        // uintV const* their_array = other.neighbors;
+        uintK const* their_array = other.neighbors;
         for (size_t i=0; i<node_array_size; i++) {
           neighbors[i] = their_array[i];
         }
@@ -154,7 +166,8 @@ namespace uncompressed_lists {
 
   inline void deallocate(uintV* node_int) {
     if (node_int) {
-      uintV deg = node_int[0];
+      // uintV deg = node_int[0];
+      uintK deg = node_int[0];
       void* node = static_cast<void*>(node_int);
       if (deg <= node_32::node::integers_per_block) {
         allocator_32::free(static_cast<node_32::node*>(node));
@@ -188,6 +201,10 @@ namespace uncompressed_lists {
     return 0;
   }
 
+  inline uintK underlying_array_size(uintK* node_int) {
+    return 0;
+  }
+
   inline uintV* alloc_node(size_t deg) {
     if (deg <= node_32::node::integers_per_block) {
       return (uintV*)allocator_32::alloc();
@@ -205,6 +222,26 @@ namespace uncompressed_lists {
       size_t arr_size = deg + 1; // check
       cout << "malloc: deg = " << deg << endl;
       return (uintV*)(pbbs::new_array_no_init<uintV>(arr_size));
+    }
+  }
+
+  inline uintK* alloc_node(size_t deg) {
+    if (deg <= node_32::node::integers_per_block) {
+      return (uintK*)allocator_32::alloc();
+    } else if (deg <= node_64::node::integers_per_block) {
+      return (uintK*)allocator_64::alloc();
+    } else if (deg <= node_128::node::integers_per_block) {
+      return (uintK*)allocator_128::alloc();
+    } else if (deg <= node_256::node::integers_per_block) {
+      return (uintK*)allocator_256::alloc();
+    } else if (deg <= node_512::node::integers_per_block) {
+      return (uintK*)allocator_512::alloc();
+    } else if (deg <= node_1024::node::integers_per_block) {
+      return (uintK*)allocator_1024::alloc();
+    } else {
+      size_t arr_size = deg + 1; // check
+      cout << "malloc: deg = " << deg << endl;
+      return (uintK*)(pbbs::new_array_no_init<uintV>(arr_size));
     }
   }
 

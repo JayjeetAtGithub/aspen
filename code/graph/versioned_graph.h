@@ -106,6 +106,17 @@ struct versioned_graph {
     G.clear_root();
   }
 
+  versioned_graph(size_t n, uintK* keys, strV* values) : current_timestamp(0) {
+    size_t initial_ht_size = 512;
+    typename table::T empty = make_tuple(max_ts, make_tuple(0, nullptr));
+    live_versions = table(initial_ht_size, empty, tombstone);
+
+    auto G = snapshot_graph(n, keys, values);
+    ts timestamp = current_timestamp++;
+    live_versions.insert(make_tuple(timestamp, make_tuple(refct_utils::make_refct(timestamp, 1), G.get_root())));
+    G.clear_root();
+  }
+
   ts latest_timestamp() {
     return current_timestamp-1;
   }

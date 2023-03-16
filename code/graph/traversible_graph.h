@@ -360,6 +360,10 @@ struct traversable_graph : private graph {
     return traversable_graph(G::insert_edges_batch(vn, vm, offsets, edges, vertices_finished));
   }
 
+  traversable_graph insert_edges_batch(size_t vn, uintK* keys, strV* values, size_t vertices_finished=0) const {
+    return traversable_graph(G::insert_edges_batch(vn, keys, values, vertices_finished));
+  }
+
   traversable_graph delete_edges_batch(size_t m, tuple<uintV, uintV>* edges, bool sorted=false, bool remove_dups=false, size_t nn=std::numeric_limits<size_t>::max(), bool run_seq=false) const {
     return traversable_graph(G::delete_edges_batch(m, edges, sorted, remove_dups, nn, run_seq));
   }

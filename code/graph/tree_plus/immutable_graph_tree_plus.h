@@ -530,6 +530,45 @@ struct sym_immutable_graph_tree_plus {
     return sym_immutable_graph_tree_plus(std::move(V_next));
   }
 
+  auto insert_edges_batch(size_t vn, uintK* keys, strV* values, size_t vertex_off=0) const {
+    using KV = pair<uintK, edge_struct>;
+    auto new_verts = pbbs::sequence<KV>(vn);
+    cout << "building" << endl;
+    parallel_for(0, vn, [&] (size_t i) { // TODO: granularity
+      uintK v = vertex_off + i;
+      size_t off = keys[i];
+      size_t deg = ((i == (vn-1)) ? vn : keys[i+1]) - off;
+      auto f = [&] (size_t i) { return values[off + i]; };
+      auto S = pbbs::sequence<uintK>(deg, f);
+      long last_id = -1;
+      for (size_t j=0; j<deg; j++) {
+        uintV id = S[j];
+        if (id <= last_id) {
+          assert(false);
+        }
+        last_id = S[j];
+      }
+
+      if (deg > 0) {
+        auto m_vert = V.find(v);
+        assert(!m_vert.valid);
+        new_verts[i] = make_pair(v, edge_struct(S, v));
+      } else {
+        new_verts[i] = make_pair(v, edge_struct());
+      }
+//      new_verts[i].second.check_consistency(v);
+    }, 1);
+    cout << "built" << endl;
+
+    auto replace = [] (const edge_struct& a, const edge_struct& b) {
+      assert(false);
+      return b;};
+    auto V_next = vertices_tree::multi_insert_sorted(V.root, new_verts.to_array(), new_verts.size(), replace, true);
+    pbbs::free_array(keys); pbbs::free_array(values);
+    cout << "inserted" << endl;
+    return sym_immutable_graph_tree_plus(std::move(V_next));
+  }
+
   static void init(size_t n, size_t m) {
     // edge_lists are the 'tree nodes' in edgelists
     using edge_list = tree_plus::edge_list;

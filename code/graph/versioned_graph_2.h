@@ -111,6 +111,17 @@ struct versioned_graph {
     G.clear_root();
   }
 
+  versioned_graph(size_t n, uintK* keys, strV* values) : current_timestamp(0) {
+    size_t initial_ht_size = 512;
+    live_versions = table(initial_ht_size, empty, tombstone);
+
+    auto G = snapshot_graph(n, keys, values);
+    ts timestamp = current_timestamp++;
+    latest_loc = live_versions.insert(make_tuple(ut::combine(timestamp, 1), G.get_root()));
+    assert(latest_loc != nullptr);
+    G.clear_root();
+  }
+
   ts latest_timestamp() {
     return current_timestamp-1;
   }

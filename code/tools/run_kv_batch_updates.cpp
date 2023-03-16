@@ -18,24 +18,24 @@
 #include "rmat_util.h"
 
 using namespace std;
-using kv_seq = pair<uintK, strV>;
+using edge_seq = pair<uintK, strV>;
 
 void parallel_updates(commandLine& P) {
   string update_fname = P.getOptionValue("-update-file", "updates.dat");
 
-  initialize_treeplus_kv_graph(P);
-  // auto VG = initialize_treeplus_kv_graph(P);
+  // initialize_treeplus_kv_graph(P);
+  auto VG = initialize_treeplus_kv_graph(P);
 
-  exit(0);
-  // cout << "calling acquire_version" << endl;
-  // auto S = VG.acquire_version();
-  // cout << "acquired!" << endl;
-  // const auto& GA = S.graph;
-  // size_t n = GA.num_vertices();
-  // cout << "n = " << n << endl;
-  // VG.release_version(std::move(S));
+  // exit(0);
+  cout << "calling acquire_version" << endl;
+  auto S = VG.acquire_version();
+  cout << "acquired!" << endl;
+  const auto& GA = S.graph;
+  size_t n = GA.num_vertices();
+  cout << "n = " << n << endl;
+  VG.release_version(std::move(S));
 
-  // using pair_kv_vertex = tuple<uintK, strV>;
+  using pair_kv_vertex = tuple<uintK, strV>;
 
   // auto r = pbbs::random();
   // // 2. Generate the sequence of insertions and deletions

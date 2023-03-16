@@ -9,11 +9,12 @@ OPT = -O3 -g
 
 CONCEPTS = -fconcepts -DCONCEPTS
 #CFLAGS = -DEDGELONG -mcx16 $(OPT) -ldl -std=c++17 -march=native -Wall -Wno-subobject-linkage -DUSEMALLOC -DNDEBUG
-CFLAGS = -DEDGELONG -mcx16 $(OPT) -ldl -std=c++17 -march=native -Wno-subobject-linkage -DUSEMALLOC -DNDEBUG
+CFLAGS = -DEDGELONG -DKEYLONG -mcx16 $(OPT) -ldl -std=c++17 -Wno-subobject-linkage -DUSEMALLOC -DNDEBUG
 
 OMPFLAGS = -DOPENMP -fopenmp
 CILKFLAGS = -DCILK -fcilkplus
-HGFLAGS = -DHOMEGROWN -pthread
+#HGFLAGS = -DHOMEGROWN -pthread
+HGFLAGS = 
 
 ifdef CLANG
 CC = clang++

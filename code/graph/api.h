@@ -380,8 +380,8 @@ auto initialize_kv_graph(string fname="", bool mmap=false, bool compressed=false
   //   cout << "Read Compressed Graph" << endl;
   // }
 
-  exit(0);
-  // return versioned_graph<treeplus_graph>(n, keys, values);
+  // exit(0);
+  return versioned_graph<treeplus_graph>(n, keys, values);
 }
 
 auto empty_treeplus_graph() {
@@ -404,8 +404,8 @@ auto initialize_treeplus_kv_graph(commandLine& P) {
   bool compressed = P.getOption("-c");
   size_t n_parts = P.getOptionLongValue("-nparts", 1);
 
-  // return initialize_kv_graph(fname, mmap, compressed, n_parts);
-  initialize_kv_graph(fname, mmap, compressed, n_parts);
+  return initialize_kv_graph(fname, mmap, compressed, n_parts);
+  // initialize_kv_graph(fname, mmap, compressed, n_parts);
 }
 
 auto get_graph_edges(const char* fname, bool is_symmetric, bool mmap=false) {

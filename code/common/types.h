@@ -54,6 +54,7 @@ typedef unsigned int uintK;
 
 // String Values
 typedef char* strV;
+// typedef std::string strV;
 
 typedef unsigned int timestamp;
 typedef unsigned int ref_count;
