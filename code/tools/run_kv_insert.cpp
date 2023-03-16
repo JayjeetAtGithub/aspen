@@ -25,7 +25,6 @@ int main(int argc, char *argv[]) {
 
   size_t num_kv_pairs = std::stol(argv[1]);
 
-  auto tree_plus_graph = empty_treeplus_graph();
 
   // Inserting key/value pairs one at a time
   std::vector<std::tuple<uintV, uintV>> stream_of_kv;
@@ -35,6 +34,7 @@ int main(int argc, char *argv[]) {
         std::make_tuple(r.ith_rand(2 * i), r.ith_rand((2 * i) + 1)));
   }
 
+  auto tree_plus_graph = empty_treeplus_graph();
   timer st;
   st.start();
   for (auto kv : stream_of_kv) {
@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
   std::cout << "runtime (delete one-at-a-time) = " << runtime << std::endl;
 
   // Inserting key/value pairs in batches
+  tree_plus_graph = empty_treeplus_graph();
   st.start();
   tree_plus_graph.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
   runtime = st.stop();
