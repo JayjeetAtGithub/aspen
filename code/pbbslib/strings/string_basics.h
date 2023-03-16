@@ -49,6 +49,12 @@ namespace pbbs {
   template <class Seq, class UnaryPred>
   sequence<char*> tokenize(Seq &S, UnaryPred const &is_space);
 
+  // Returns a pointer to the start of each line i.e. key-value pair entry
+  // Can be used with c style char* functions on each token since they will be null
+  // terminated.
+  template <class Seq, class UnaryPred>
+  sequence<char*> lines(Seq &S, UnaryPred const &is_newline);
+
   // Returns a sequence of character ranges, one per partition
   // The StartFlags sequence specifies the start of each partition
   // The two arguments must be of the same length
@@ -104,6 +110,15 @@ namespace pbbs {
     }
   }
 
+  // standard definition of a newline character
+  inline bool is_newline(char c) {
+    switch (c)  {
+    case '\r':
+    case '\n': return true;
+    default : return false;
+    }
+  }
+
   template <class Seq, class UnaryPred>
   sequence<range<char*>> tokens(Seq const &S, UnaryPred const &is_space) {
     size_t n = S.size();
@@ -146,6 +161,43 @@ namespace pbbs {
 
     sequence<char*> r = pbbs::pack(Pointers, StartFlags);
     t.next("offsets");
+
+    return r;
+  }
+
+  template <class Seq, class UnaryPred>
+  sequence<char*> lines(Seq  &S, UnaryPred const &is_newline) {
+    size_t n = S.size();
+    timer t("lines",false);
+
+    // clear newlines
+    parallel_for (0, n, [&] (size_t i) {
+if (is_newline(S[i])) S[i] = 0;}, 10000);
+    S[n] = 0;
+    t.next("clear");
+
+    auto StartFlags = delayed_seq<bool>(n, [&] (long i) {
+	return (i==0) ? S[i] : S[i] && !S[i-1];});
+
+    //Character count length
+    auto Pointers = delayed_seq<char*>(n, [&] (long i) {
+	return S.begin() + i;});
+
+    // cout << "Pointers: " << Pointers.size() << endl;
+    // cout << "StartFlags: " << StartFlags.size() << endl;
+
+    // cout << "Pointers: " << Pointers[0] << endl;
+    // cout << "Pointers: " << Pointers[1] << endl;
+    // cout << "StartFlags: " << StartFlags[0] << endl;
+    // cout << "StartFlags: " << StartFlags[1] << endl;
+
+    //Sentence count length
+    sequence<char*> r = pbbs::pack(Pointers, StartFlags);
+    t.next("offsets");
+
+    // cout << "r: " << r.size() << endl;
+    // cout << "r[0]: " << r[0] << endl;
+    // cout << "r[-1]: " << r[r.size()-1] << endl;
 
     return r;
   }

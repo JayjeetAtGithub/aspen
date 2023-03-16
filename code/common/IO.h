@@ -105,6 +105,50 @@ auto read_unweighted_graph(const char* fname, bool is_symmetric, bool mmap=false
   return make_tuple(n, m, offsets, edges);
 }
 
+// Read unweighted graph with Key-Value pairs
+auto read_unweighted_kv_graph(const char* fname, bool mmap=false) {
+  pbbs::sequence<char*> kv;
+  pbbs::sequence<char> S;
+  if (mmap) {
+    auto SS = mmapStringFromFile(fname);
+    char *bytes = pbbs::new_array_no_init<char>(SS.second);
+    // Cannot mutate the graph unless we copy.
+    parallel_for(0, SS.second, [&] (size_t i) {
+      bytes[i] = SS.first[i];
+    });
+    if (munmap(SS.first, SS.second) == -1) {
+      perror("munmap");
+      exit(-1);
+    }
+    S = pbbs::sequence<char>(bytes, SS.second);
+  } else {
+    S = readStringFromFile(fname);
+  }
+  kv = pbbs::lines(S, [] (const char c) { return pbbs::is_newline(c); });
+  std::cout << kv[0] << endl;
+  std::cout << kv[0][0] << endl;
+  // std::cout << kv[1] << endl;
+  
+  // std::cout << typeid(kv).name() << endl;
+  // std::cout << typeid(kv[0]).name() << endl;
+
+  size_t len = kv.size() - 1;
+  // std::cout << len << endl;
+  // std::cout << kv[len] << endl;
+  // std::cout << kv[len-1] << endl;
+
+  uintK* keys = pbbs::new_array_no_init<uintK>(len);
+  strV* values = pbbs::new_array_no_init<strV>(len);
+
+  // Have to change for the new input format of key value pair datasets
+  parallel_for(0, len, [&] (size_t i) { keys[i] = atoi(kv[i]); });
+  parallel_for(0, len, [&] (size_t i) { values[i] = kv[i]; });
+
+  S.clear();
+  kv.clear();
+  return make_tuple(len, keys, values);
+}
+
 auto read_o_direct(const char* fname) {
   int fd;
   if ( (fd = open(fname, O_RDONLY | O_DIRECT) ) != -1) {
@@ -207,44 +251,111 @@ auto read_compressed_graph(const char* fname, bool is_symmetric, bool mmap=false
   return make_tuple(n, m, ret_offsets, ret_edges);
 }
 
-// Read Key-Value pairs
-auto read_unweighted_kv_graph(const char* fname, bool mmap=false) {
-  pbbs::sequence<char*> tokens;
-  pbbs::sequence<char> S;
+auto read_compressed_kv_graph(const char* fname, bool is_symmetric, bool mmap=false) {
+  // using uchar = unsigned char;
+  // char* s;
+  // size_t s_size = 0L;
+  // if (mmap) {
+  //   auto SS = mmapStringFromFile(fname);
+  //   s = SS.first;
+  //   s_size = SS.second;
+  // } else {
+  //   s = read_o_direct(fname);
+  // }
+
+  // long* sizes = (long*) s;
+  // size_t n = sizes[0], m = sizes[1];
+
+  // uintK* keys = (uintK*) (s+3*sizeof(long));
+  // long skip = 3*sizeof(long) + (n+1)*sizeof(uintE);
+  // strV* Degrees = (strV*) (s+skip);
+  // skip += n*sizeof(strV);
+  // uchar* edges = (uchar*)(s+skip);
+
+  // auto ret_keys = pbbs::new_array_no_init<uintK>(n);
+  // auto ret_values = pbbs::new_array_no_init<strV>(n);
+
+  // parallel_for(0, n, [&] (size_t i) {
+  //   ret_keys[i] = Degrees[i];
+  // });
+  // auto offs = pbbs::sequence<uintE>(ret_keys, n);
+  // size_t tot = pbbs::scan_inplace(offs.slice(), pbbs::addm<uintE>());
+  // assert(tot == m);
+
+  // parallel_for(0, n, [&] (size_t i) {
+  //   size_t off = ret_offsets[i];
+  //   size_t deg = ((i == (n-1)) ? m : ret_offsets[i+1]) - off;
+  //   if (deg > 0) {
+  //     uchar const* start = edges + offsets[i];
+  //     uintV ngh = compression::read_first_neighbor(start, i);
+  //     ret_edges[off] = ngh;
+  //     if (i == 1) { cout << ngh << endl; }
+  //     for (size_t j=1; j<deg; j++) {
+  //       ngh += compression::read_neighbor(start);
+  //       ret_edges[off + j] = ngh;
+  //     }
+  //   }
+  // });
+
+  // if (mmap) {
+  //   if (munmap(s, s_size) == -1) {
+  //     perror("munmap");
+  //     exit(-1);
+  //   }
+  // }
+
+  // return make_tuple(n, ret_keys, ret_values);
+  using uchar = unsigned char;
+  char* s;
+  size_t s_size = 0L;
   if (mmap) {
     auto SS = mmapStringFromFile(fname);
-    char *bytes = pbbs::new_array_no_init<char>(SS.second);
-    // Cannot mutate the graph unless we copy.
-    parallel_for(0, SS.second, [&] (size_t i) {
-      bytes[i] = SS.first[i];
-    });
-    if (munmap(SS.first, SS.second) == -1) {
+    s = SS.first;
+    s_size = SS.second;
+  } else {
+    s = read_o_direct(fname);
+  }
+
+  long* sizes = (long*) s;
+  size_t n = sizes[0], m = sizes[1];
+
+  uintE* offsets = (uintE*) (s+3*sizeof(long));
+  long skip = 3*sizeof(long) + (n+1)*sizeof(uintE);
+  uintV* Degrees = (uintV*) (s+skip);
+  skip += n*sizeof(uintV);
+  uchar* edges = (uchar*)(s+skip);
+
+  auto ret_offsets = pbbs::new_array_no_init<uintE>(n);
+  auto ret_edges = pbbs::new_array_no_init<uintV>(m);
+
+  parallel_for(0, n, [&] (size_t i) {
+    ret_offsets[i] = Degrees[i];
+  });
+  auto offs = pbbs::sequence<uintE>(ret_offsets, n);
+  size_t tot = pbbs::scan_inplace(offs.slice(), pbbs::addm<uintE>());
+  assert(tot == m);
+
+  parallel_for(0, n, [&] (size_t i) {
+    size_t off = ret_offsets[i];
+    size_t deg = ((i == (n-1)) ? m : ret_offsets[i+1]) - off;
+    if (deg > 0) {
+      uchar const* start = edges + offsets[i];
+      uintV ngh = compression::read_first_neighbor(start, i);
+      ret_edges[off] = ngh;
+      if (i == 1) { cout << ngh << endl; }
+      for (size_t j=1; j<deg; j++) {
+        ngh += compression::read_neighbor(start);
+        ret_edges[off + j] = ngh;
+      }
+    }
+  });
+
+  if (mmap) {
+    if (munmap(s, s_size) == -1) {
       perror("munmap");
       exit(-1);
     }
-    S = pbbs::sequence<char>(bytes, SS.second);
-  } else {
-    S = readStringFromFile(fname);
   }
-  tokens = pbbs::tokenize(S, [] (const char c) { return pbbs::is_space(c); });
-  // assert(tokens[0] == (string) "AdjacencyGraph");
 
-  // size_t len = tokens.size() - 1;
-  size_t len = tokens.size();
-  // size_t n = atol(tokens[1]);
-  // size_t m = atol(tokens[2]);
-
-  // cout << "n = " << n << " m = " << m << endl;
-  // assert(len == n + m + 2);
-
-  uintK* keys = pbbs::new_array_no_init<uintK>(len);
-  strV* values = pbbs::new_array_no_init<strV>(len);
-
-  // Have to change for the new input format of key value pair datasets
-  parallel_for(0, len, [&] (size_t i) { keys[i] = atol(tokens[i]); });
-  parallel_for(0, len, [&] (size_t i) { values[i] = atol(tokens[i]); });
-
-  S.clear();
-  tokens.clear();
-  return make_tuple(len, len, keys, values);
+  return make_tuple(n, m, ret_offsets, ret_edges);
 }

@@ -209,5 +209,41 @@ struct versioned_graph {
     release_version(std::move(S));
   }
 
+  // single-entry
+  void insert_kv_edges_batch(size_t m, tuple<uintK, strV>* edges, bool sorted=false, bool remove_dups=false, size_t nn = std::numeric_limits<size_t>::max(), bool run_seq=false) {
+    auto S = acquire_version();
+    const auto& G = S.graph;
+
+    // 1. Insert the new graph (not yet visible) into the live versions set
+    snapshot_graph G_next = G.insert_kv_edges_batch(m, edges, sorted, remove_dups, nn, run_seq);
+    assert(G_next.get_root());
+    live_versions.insert(make_tuple(current_timestamp,
+                                    make_tuple(refct_utils::make_refct(current_timestamp, 1),
+                                               G_next.get_root())));
+    G_next.clear_root();
+    // 2. Make the new version visible
+    pbbs::fetch_and_add(&current_timestamp, 1);
+
+    release_version(std::move(S));
+  }
+
+  // single-entry
+  void delete_kv_edges_batch(size_t m, tuple<uintK, strV>* edges, bool sorted=false, bool remove_dups=false, size_t nn = std::numeric_limits<size_t>::max(), bool run_seq=false) {
+    auto S = acquire_version();
+    const auto& G = S.graph;
+
+    // 1. Insert the new graph (not yet visible) into the live versions set
+    snapshot_graph G_next = G.delete_kv_edges_batch(m, edges, sorted, remove_dups, nn, run_seq);
+    live_versions.insert(make_tuple(current_timestamp,
+                                    make_tuple(refct_utils::make_refct(current_timestamp, 1),
+                                               G_next.get_root())));
+    G_next.clear_root();
+
+    // 2. Make the new version visible
+    pbbs::fetch_and_add(&current_timestamp, 1);
+
+    release_version(std::move(S));
+  }
+
 
 };
