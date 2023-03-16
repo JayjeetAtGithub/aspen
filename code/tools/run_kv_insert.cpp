@@ -63,14 +63,10 @@ int main(int argc, char *argv[]) {
   runtime = st.stop();
   std::cout << "runtime (delete batches) = " << runtime << std::endl;
 
-  // using just the tree plus
-  sym_immutable_graph_tree_plus tree_plus;
-  st.start();
-  tree_plus.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
-  runtime = st.stop();
-  std::cout << "runtime (tree plus) = " << runtime << std::endl;
-
-  std::cout << "size: " << tree_plus.size_in_bytes() << std::endl;
-  std::cout << "num_vertices: " << tree_plus.num_vertices() << std::endl;
-  std::cout << "num_edges: " << tree_plus.num_edges() << std::endl;
+  // // using just the tree plus
+  // sym_immutable_graph_tree_plus tree_plus;
+  // st.start();
+  // tree_plus.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
+  // runtime = st.stop();
+  // std::cout << "runtime (tree plus) = " << runtime << std::endl;
 }
