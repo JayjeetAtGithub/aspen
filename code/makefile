@@ -50,7 +50,7 @@ run_kv_batch_updates:  tools/run_kv_batch_updates.cpp
 run_kv_insert: tools/run_kv_insert.cpp
     $(CC) $(CFLAGS) $(PFLAGS) tools/run_kv_insert.cpp -o run_kv_insert
 
-run_kv_insert: tools/run_kv_insert_btree.cpp
+run_kv_insert_btree: tools/run_kv_insert_btree.cpp
     $(CC) $(CFLAGS) $(PFLAGS) tools/run_kv_insert_btree.cpp -o run_kv_insert_btree
 
 run_simultaneous_updates_queries:  tools/run_simultaneous_updates_queries.cpp
