@@ -1,66 +1,69 @@
 #include "../graph/api.h"
-#include "../trees/utils.h"
-#include "../lib_extensions/sparse_table_hash.h"
 #include "../graph/tree_plus/immutable_graph_tree_plus.h"
+#include "../lib_extensions/sparse_table_hash.h"
 #include "../pbbslib/random_shuffle.h"
+#include "../trees/utils.h"
 
 #include <cstring>
 
-#include <vector>
 #include <algorithm>
 #include <chrono>
-#include <thread>
 #include <cmath>
+#include <thread>
+#include <vector>
 
-
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 #include "rmat_util.h"
 
+int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    std::cout << "Usage: " << argv[0] << " <num_vertices>" << std::endl;
+    return 0;
+  }
 
-int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " <num_vertices>" << std::endl;
-        return 0;
-    } 
+  size_t num_kv_pairs = std::stol(argv[1]);
 
-    size_t num_kv_pairs = std::stol(argv[1]);
+  auto tree_plus_graph = empty_treeplus_graph();
 
-    auto tree_plus_graph = empty_treeplus_graph();  
+  // Inserting key/value pairs one at a time
+  std::vector<std::tuple<uintV, uintV>> stream_of_kv;
+  auto r = pbbs::random(num_kv_pairs * 2);
+  for (int i = 0; i < num_kv_pairs; i++) {
+    stream_of_kv.push_back(
+        std::make_tuple(r.ith_rand(2 * i), r.ith_rand((2 * i) + 1)));
+  }
 
-    // Inserting key/value pairs one at a time
-    std::vector<std::tuple<uintV, uintV>> stream_of_kv;
-    auto r = pbbs::random(num_kv_pairs*2);
-    for (int i = 0; i < num_kv_pairs; i++) {
-        stream_of_kv.push_back(std::make_tuple(r.ith_rand(2*i), r.ith_rand((2*i)+1)));        
-    }
-    
-    timer st;
-    st.start();
-    for (auto kv : stream_of_kv) {
-        // std::cout << "Inserting: " << std::get<0>(kv) << ", " << std::get<1>(kv) << std::endl;
-        tree_plus_graph.insert_edges_batch(1, &kv);
-    }
-    double runtime = st.stop();
-    std::cout << "runtime (one-at-a-time) = " << runtime << std::endl;
+  timer st;
+  st.start();
+  for (auto kv : stream_of_kv) {
+    // std::cout << "Inserting: " << std::get<0>(kv) << ", " << std::get<1>(kv)
+    // << std::endl;
+    tree_plus_graph.insert_edges_batch(1, &kv);
+  }
+  double runtime = st.stop();
+  std::cout << "runtime (one-at-a-time) = " << runtime << std::endl;
 
-    // Inserting key/value pairs in batches
-    st.start();
-    tree_plus_graph.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
-    runtime = st.stop();
-    std::cout << "runtime (batch) = " << runtime << std::endl;
+  // Inserting key/value pairs in batches
+  st.start();
+  tree_plus_graph.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
+  runtime = st.stop();
+  std::cout << "runtime (batch) = " << runtime << std::endl;
 
-    // using just the tree plus 
-    sym_immutable_graph_tree_plus tree_plus;
-    st.start();
-    tree_plus.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
-    runtime = st.stop();
-    std::cout << "runtime (tree plus) = " << runtime << std::endl;
+  // Deleting key/value pairs in batches
+  st.start()
 
-    std::cout << "size: " << tree_plus.size_in_bytes() << std::endl;
-    std::cout << "num_vertices: " << tree_plus.num_vertices() << std::endl;
-    std::cout << "num_edges: " << tree_plus.num_edges() << std::endl;
+      // using just the tree plus
+      sym_immutable_graph_tree_plus tree_plus;
+  st.start();
+  tree_plus.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
+  runtime = st.stop();
+  std::cout << "runtime (tree plus) = " << runtime << std::endl;
+
+  std::cout << "size: " << tree_plus.size_in_bytes() << std::endl;
+  std::cout << "num_vertices: " << tree_plus.num_vertices() << std::endl;
+  std::cout << "num_edges: " << tree_plus.num_edges() << std::endl;
 }
 
 // void parallel_updates(commandLine& P) {
@@ -126,8 +129,8 @@ int main(int argc, char* argv[]) {
 //       {
 //         //cout << "Inserting" << endl;
 //         timer st; st.start();
-//         VG.insert_edges_batch(update_sizes[us], updates.begin(), false, true, nn, false);
-//         double batch_time = st.stop();
+//         VG.insert_edges_batch(update_sizes[us], updates.begin(), false, true,
+//         nn, false); double batch_time = st.stop();
 
 //         // cout << "batch time = " << batch_time << endl;
 //         avg_insert += batch_time;
@@ -136,8 +139,8 @@ int main(int argc, char* argv[]) {
 //       {
 //         // cout << "Deleting" << endl;
 //         timer st; st.start();
-//         VG.delete_edges_batch(update_sizes[us], updates.begin(), false, true, nn, false);
-//         double batch_time = st.stop();
+//         VG.delete_edges_batch(update_sizes[us], updates.begin(), false, true,
+//         nn, false); double batch_time = st.stop();
 
 //         // cout << "batch time = " << batch_time << endl;
 //         avg_delete += batch_time;
