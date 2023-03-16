@@ -50,18 +50,18 @@ int main(int argc, char *argv[]) {
   runtime = st.stop();
   std::cout << "runtime (delete one-at-a-time) = " << runtime << std::endl;
 
-  // Inserting key/value pairs in batches
-  tree_plus_graph = empty_treeplus_graph();
-  st.start();
-  tree_plus_graph.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
-  runtime = st.stop();
-  std::cout << "runtime (insert batches) = " << runtime << std::endl;
+  // // Inserting key/value pairs in batches
+  // tree_plus_graph = empty_treeplus_graph();
+  // st.start();
+  // tree_plus_graph.insert_edges_batch(stream_of_kv.size(), stream_of_kv.data());
+  // runtime = st.stop();
+  // std::cout << "runtime (insert batches) = " << runtime << std::endl;
 
-  // Deleting key/value pairs in batches
-  st.start();
-  tree_plus_graph.delete_edges_batch(stream_of_kv.size(), stream_of_kv.data());
-  runtime = st.stop();
-  std::cout << "runtime (delete batches) = " << runtime << std::endl;
+  // // Deleting key/value pairs in batches
+  // st.start();
+  // tree_plus_graph.delete_edges_batch(stream_of_kv.size(), stream_of_kv.data());
+  // runtime = st.stop();
+  // std::cout << "runtime (delete batches) = " << runtime << std::endl;
 
   // // using just the tree plus
   // sym_immutable_graph_tree_plus tree_plus;

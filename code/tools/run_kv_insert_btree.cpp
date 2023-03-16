@@ -618,22 +618,22 @@ void BTree::remove(int k)
     return;
 }
 
-int main()
-{
-    BTree t(1000000);
+int main() {
+    size_t num_kv_pairs = std::stol(argv[1]);
+    BTree t(num_kv_pairs);
     
-    auto r = pbbs::random(1000000);
+    auto r = pbbs::random(num_kv_pairs);
     
     timer st;
     st.start();
-    for (int i = 0; i < 1000000; i++) {
+    for (int i = 0; i < num_kv_pairs; i++) {
         t.insert(r.ith_rand(i));
     }
     double runtime = st.stop();
     std::cout << "runtime (insert one-at-a-time) = " << runtime << std::endl;
 
     st.start();
-    for (int i = 0; i < 1000000; i++) {
+    for (int i = 0; i < num_kv_pairs; i++) {
         t.remove(r.ith_rand(i));
     }
     runtime = st.stop();
